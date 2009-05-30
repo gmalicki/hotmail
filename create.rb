@@ -45,6 +45,7 @@ def sleep_until_browser_closed
   loop do
     sleep 2
     break unless firefox_running?
+    puts $browser.url
     if $browser.url == "http://mail.live.com/?rru=inbox"
       $browser.close
     end
