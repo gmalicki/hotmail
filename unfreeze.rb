@@ -47,7 +47,7 @@ end
 def sleep_until_browser_closed
   loop do
     sleep 2
-    break unless `ps aux` =~ /firefox-bin/
+    break if $browser.url =~ /mail.live.com/
   end
 end
 
