@@ -40,7 +40,7 @@ def create_page_url html
   html.split('top.location = \'').last.split('\'').first
 end
 
-def sleep_until_logged_in
+def sleep_until_logged_in_or_closed
   loop do
     sleep 2
     break if $browser.html =~ /sign out/
@@ -58,21 +58,21 @@ def create_accounts(domain="hotmail.com")
       $browser.goto CREATE_URL
       $browser.goto create_page_url($browser.html)
       $browser.select_lists[1].select domain
-      $browser.text_field(:name, 'imembernamelive').set(identity.login) ; sleep 1
+      $browser.text_field(:name, 'imembernamelive').value= (identity.login) ; sleep 1
       $browser.text_field(:name, 'iPwd').value = ACCOUNT_PASS
-      $browser.text_field(:name, 'iRetypePwd').set(ACCOUNT_PASS)
-      $browser.text_field(:name, 'iAltEmail').set(identity.email)
-      $browser.text_field(:name, 'iFirstName').set(identity.first_name)
-      $browser.text_field(:name, 'iLastName').set(identity.last_name)
+      $browser.text_field(:name, 'iRetypePwd').value= (ACCOUNT_PASS)
+      $browser.text_field(:name, 'iAltEmail').value = (identity.email)
+      $browser.text_field(:name, 'iFirstName').value = (identity.first_name)
+      $browser.text_field(:name, 'iLastName').value = (identity.last_name)
       $browser.select_list(:name, 'iRegion').select(identity.state)
-      $browser.text_field(:name, 'iZipCode').set(identity.zip)
-      $browser.text_field(:name, 'iBirthYear').set(identity.birth_year)
+      $browser.text_field(:name, 'iZipCode').value = (identity.zip)
+      $browser.text_field(:name, 'iBirthYear').value = (identity.birth_year)
       if identity.gender == 'male'
         $browser.radios[1].click
       else
         $browser.radios[2].click
       end
-      sleep_until_browser_closed
+      sleep_until_logged_in_or_closed
       success_rec = {'login' => identity.login, 'pass' => ACCOUNT_PASS, 'domain' => domain}
       $created_queue.send_message($sqs_crypto_key.encrypt64(success_rec.to_yaml))
       Cookies.delete
