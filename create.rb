@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'win32ole'
 require 'right_aws'
 require 'ezcrypto'
 require 'yaml'
@@ -40,11 +41,19 @@ def create_page_url html
   html.split('top.location = \'').last.split('\'').first
 end
 
-def sleep_until_logged_in_or_closed
+def sleep_until_browser_closed
   loop do
     sleep 2
-    break if $browser.html =~ /sign out/
+    break unless firefox_running? 
   end
+end
+
+def firefox_running?
+  procs = WIN32OLE.connect("winmgmts:\\\\.")
+  procs.InstancesOf("win32_process").each do |p|
+    return true if p.name.to_s.downcase == "firefox.exe"
+  end
+  false
 end
 
 def create_accounts(domain="hotmail.com")
@@ -72,7 +81,7 @@ def create_accounts(domain="hotmail.com")
       else
         $browser.radios[2].click
       end
-      sleep_until_logged_in_or_closed
+      sleep_until_browser_closed
       success_rec = {'login' => identity.login, 'pass' => ACCOUNT_PASS, 'domain' => domain}
       $created_queue.send_message($sqs_crypto_key.encrypt64(success_rec.to_yaml))
       Cookies.delete
