@@ -40,10 +40,10 @@ def create_page_url html
   html.split('top.location = \'').last.split('\'').first
 end
 
-def sleep_until_browser_closed
+def sleep_until_logged_in
   loop do
     sleep 2
-    break unless `ps aux` =~ /firefox-bin/
+    break if $browser.html =~ /sign out/
   end
 end
 
