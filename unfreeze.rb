@@ -6,6 +6,7 @@ require 'hpricot'
 require 'firewatir'
 require 'rand'
 require 'fileutils'
+require 'win32ole'
 require 'random_names'
 
 LOGIN_URL = "http://www.hotmail.com"
@@ -25,7 +26,7 @@ class BadDomainErr < Exception; end
 class PageMissingErr < Exception; end  
 
 class Cookies
-  def self.delete(file= "/Users/gabrielmalicki/Library/Application Support/Firefox/Profiles/w6vskww9.default/cookies.txt")
+  def self.delete(file= 'C:\Documents and Settings\Owner\Application Data\Mozilla\Firefox\Profiles\eejbh2sv.default\cookies.txt')
     FileUtils.rm file
   rescue Exception
   end
@@ -47,8 +48,16 @@ end
 def sleep_until_browser_closed
   loop do
     sleep 2
-    break if $browser.url =~ /mail.live.com/
+    break unless firefox_running?
   end
+end
+
+def firefox_running?
+  procs = WIN32OLE.connect("winmgmts:\\\\.")
+  procs.InstancesOf("win32_process").each do |p|
+    return true if p.name.to_s.downcase == "firefox.exe"
+  end
+  false
 end
 
 def next_frozen
