@@ -101,5 +101,9 @@ end
 $current_ip = IpAddress.current_ip
 $ip_ok = IpAddress.use_ip($current_ip)
 $create_count = 0
-a_type = ['live.com', 'hotmail.com'].pick
+if rand(1) == 0
+  a_type = "live.com"
+else
+  a_type = "hotmail.com"
+end
 create_accounts(a_type)
