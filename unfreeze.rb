@@ -26,7 +26,7 @@ class BadDomainErr < Exception; end
 class PageMissingErr < Exception; end  
 
 class Cookies
-  def self.delete(file= 'C:\Documents and Settings\Owner\Application Data\Mozilla\Firefox\Profiles\eejbh2sv.default\cookies.txt')
+  def self.delete(file= 'C:\Documents and Settings\Administrator\Application Data\Mozilla\Firefox\Profiles\tp70ibuy.default\cookies.txt')
     FileUtils.rm file
   rescue Exception
   end
