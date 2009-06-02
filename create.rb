@@ -60,6 +60,7 @@ def create_accounts(domain="hotmail.com")
   # prepare the web browser
   raise BadDomainErr unless domain == "hotmail.com" || domain == "live.com"
   loop do
+    check_ip
     if $ip_ok && $create_count < 2
       $browser = Watir::Browser.new
       identity = RandomIdentity.new
@@ -95,9 +96,9 @@ end
 
 def check_ip
   ip = IpAddress.current_ip
-  if $skip != 0
+  if $skip
     $ip_ok = true
-    $skip -= 1
+    $skip = false
     return $current_ip
   end
   if ip != $current_ip
@@ -111,13 +112,14 @@ def check_ip
   end
 end
 
+
 $current_ip = IpAddress.current_ip
 $ip_ok = IpAddress.use_ip($current_ip)
 $create_count = 0
-$skip = 0
+$skip = false
 
 if ARGV[0] == "skip"
-  $skip = 2
+  $skip = true
 end
 
 if rand(1) == 0
